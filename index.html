@@ -156,7 +156,7 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
   </div>
 </header>
  
-<!-- CARROSSEL FUNCIONAL -->
+<!-- CARROSSEL COM SETAS MANUAIS -->
 <div class="carousel">
   <div class="carousel-inner" id="carouselInner">
     <div class="slide"><img src="carrossel11.JPEG"></div>
@@ -166,6 +166,11 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
     <div class="slide"><img src="air5.jpg"></div>
   </div>
 
+  <!-- Setas -->
+  <button class="arrow left"  id="prev">&#10094;</button>
+  <button class="arrow right" id="next">&#10095;</button>
+
+  <!-- Bolinhas (opcional, mantidas) -->
   <div class="carousel-dots">
     <span class="dot active"></span>
     <span class="dot"></span>
@@ -181,6 +186,13 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
 .slide{flex:0 0 100%}
 .slide img{width:100%;display:block}
 
+/* setas */
+.arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;font-size:24px;padding:8px 12px;cursor:pointer;opacity:0;transition:opacity .3s}
+.carousel:hover .arrow{opacity:1}
+.left{left:8px}
+.right{right:8px}
+
+/* dots */
 .carousel-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer}
 .dot.active{background:#fff}
@@ -190,29 +202,39 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
 (() => {
   const inner = document.getElementById('carouselInner');
   const dots  = document.querySelectorAll('.dot');
+  const prev  = document.getElementById('prev');
+  const next  = document.getElementById('next');
+  const total = 5;
   let idx = 0;
 
-  const go = i => {
-    idx = (i + 5) % 5;
-    inner.style.transform = `translateX(-${idx * 100 / 5}%)`;
-    dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
+  const render = () => {
+    inner.style.transform = `translateX(-${idx * 100}%)`;
+    dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
   };
 
-  dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
+  const move = dir => {
+    idx = (idx + dir + total) % total;
+    render();
+  };
 
-  /* swipe */
+  prev.addEventListener('click', () => move(-1));
+  next.addEventListener('click', () => move(1));
+
+  dots.forEach((d,i)=>d.addEventListener('click',()=>{idx=i;render();}));
+
+  /* mantém o swipe se quiser */
   let x0 = null;
   const unify = e => e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
   inner.addEventListener('touchstart', e=>x0=unify(e),{passive:true});
   inner.addEventListener('mousedown',  e=>x0=unify(e));
   const end = e => {
-    if (x0===null) return;
-    const dx = unify(e)-x0;
-    Math.abs(dx)>40 && go(dx>0?idx-1:idx+1);
+    if(x0===null)return;
+    const dx=unify(e)-x0;
+    Math.abs(dx)>40 && move(dx>0?-1:1);
     x0=null;
   };
   inner.addEventListener('touchend', end,{passive:true});
-  inner.addEventListener('mouseup',  end);
+  inner.addEventListener('mouseup', end);
 })();
 </script>
 <!-- /CARROSSEL -->
