@@ -156,7 +156,7 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
   </div>
 </header>
  
-<!-- ===== CARROSSEL 100% MANUAL ===== -->
+<!-- CARROSSEL FUNCIONAL -->
 <div class="carousel">
   <div class="carousel-inner" id="carouselInner">
     <div class="slide"><img src="carrossel11.JPEG"></div>
@@ -165,10 +165,6 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
     <div class="slide"><img src="air4.jpg"></div>
     <div class="slide"><img src="air5.jpg"></div>
   </div>
-
-  <!-- setas sempre visíveis -->
-  <button class="arrow left"  id="prev">&#10094;</button>
-  <button class="arrow right" id="next">&#10095;</button>
 
   <div class="carousel-dots">
     <span class="dot active"></span>
@@ -180,53 +176,46 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
 </div>
 
 <style>
-.carousel{position:relative;overflow:hidden;margin-top:48px}
-.carousel-inner{display:flex;transition:transform .4 ease}
-.carousel-inner img{width:100%;flex-shrink:0}
-.carousel-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px}
-.carousel-dots span{width:6px;height:6px;background:rgba(255,255,255,.5);border-radius:50%}
-.carousel-dots span.active{background:#fff}
+.carousel{position:relative;overflow:hidden}
+.carousel-inner{display:flex;transition:transform .4s ease}
+.slide{flex:0 0 100%}
+.slide img{width:100%;display:block}
 
-/* setas sempre visíveis e estilizadas */
-.arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;font-size:24px;padding:8px 12px;cursor:pointer;opacity:1}
-.left{left:8px}
-.right{right:8px}
+.carousel-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer}
+.dot.active{background:#fff}
 </style>
 
 <script>
 (() => {
   const inner = document.getElementById('carouselInner');
-  const dots  = [...document.querySelectorAll('.dot')];
-  const prev  = document.getElementById('prev');
-  const next  = document.getElementById('next');
-  const total = dots.length;
+  const dots  = document.querySelectorAll('.dot');
   let idx = 0;
 
-  const render = () => {
-    inner.style.transform = `translateX(-${idx * 100}%)`;
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  const go = i => {
+    idx = (i + 5) % 5;
+    inner.style.transform = `translateX(-${idx * 100 / 5}%)`;
+    dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
   };
 
-  prev.onclick = () => { idx = (idx - 1 + total) % total; render(); };
-  next.onclick = () => { idx = (idx + 1) % total; render(); };
-  dots.forEach((d, i) => d.onclick = () => { idx = i; render(); });
+  dots.forEach((d,i)=>d.addEventListener('click',()=>go(i)));
 
-  /* swipe opcional */
+  /* swipe */
   let x0 = null;
   const unify = e => e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-  inner.addEventListener('touchstart', e => x0 = unify(e), {passive:true});
-  inner.addEventListener('mousedown',  e => x0 = unify(e));
+  inner.addEventListener('touchstart', e=>x0=unify(e),{passive:true});
+  inner.addEventListener('mousedown',  e=>x0=unify(e));
   const end = e => {
-    if (x0 === null) return;
-    const dx = unify(e) - x0;
-    Math.abs(dx) > 40 && (dx > 0 ? prev.onclick() : next.onclick());
-    x0 = null;
+    if (x0===null) return;
+    const dx = unify(e)-x0;
+    Math.abs(dx)>40 && go(dx>0?idx-1:idx+1);
+    x0=null;
   };
-  inner.addEventListener('touchend', end, {passive:true});
-  inner.addEventListener('mouseup', end);
+  inner.addEventListener('touchend', end,{passive:true});
+  inner.addEventListener('mouseup',  end);
 })();
 </script>
-<!-- ===== FIM DO CARROSSEL ===== -->
+<!-- /CARROSSEL -->
 
 <!-- CONTADOR REGRESSIVO CORRIGIDO -->
 <div class="flash-banner">
@@ -325,12 +314,12 @@ src="https://www.facebook.com/tr?id=2044279456337302&ev=PageView&noscript=1"
   </div>
 </div>
 
-&lt;script&gt;
+<script>
 function selCor(el){
-  document.querySelectorAll('.colors span').forEach(s =&gt; s.classList.remove('selected'));
+  document.querySelectorAll('.colors span').forEach(s => s.classList.remove('selected'));
   el.classList.add('selected');
 }
-&lt;/script&gt;
+</script>
 <!-- ========= FIM DO BLOCO ========= -->
 
 <div class="extras">
@@ -447,7 +436,7 @@ function selCor(el){
   <button id="btnDir" onclick="mudarImg(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:48px;height:48px;background:rgba(255,255,255,.15);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;cursor:pointer;z-index:2">›</button>
 </div>
 
-&lt;script&gt;
+<script>
   const items = document.querySelectorAll('.review-item');
   let indiceAtual = 0;
   let scrollAntes = 0;
@@ -481,10 +470,10 @@ function selCor(el){
   }
 
   // fecha qualquer toque na área vazia
-  document.getElementById('galeriaOverlay').addEventListener('click', (e) =&gt; {
+  document.getElementById('galeriaOverlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('galeriaOverlay')) fechaGaleria();
   });
-&lt;/script&gt;
+</script>
 
 
 <!-- PERFIL DA LOJA -->
@@ -580,6 +569,17 @@ function selCor(el){
 </style>
 
 <script>
+/* Carrossel com 2 imagens */
+let idx = 0;
+const inner = document.querySelector('.carousel-inner');
+const imgs = inner.children;
+const dots = document.querySelectorAll('.carousel-dots span');
+setInterval(() => {
+  idx = (idx + 1) % imgs.length;
+  inner.style.transform = `translateX(-${idx * 100}%)`;
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+}, 4000);
+
 /* Quantidade */
 function changeQty(dir) {
   const q = document.querySelector('.qty input');
@@ -624,4 +624,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-    elH.textContent = String(h).padStart(2,
+    elH.textContent = String(h).padStart(2, '0');
+    elM.textContent = String(m).padStart(2, '0');
+    elS.textContent = String(s).padStart(2, '0');
+  }, 1000);
+});
+
+/* Ver mais / ver menos */
+const btn = document.getElementById('btnVerMais');
+const seta = document.getElementById('seta');
+const desc = document.getElementById('descCompleta');
+btn.addEventListener('click', () => {
+  const aberto = desc.style.display === 'block';
+  desc.style.display = aberto ? 'none' : 'block';
+  seta.style.transform = aberto ? '' : 'rotate(180deg)';
+  btn.innerHTML = aberto
+    ? 'Ver mais<span id="seta" style="transition:transform .3s">⌄</span>'
+    : 'Ver menos<span id="seta" style="transition:transform .3s">⌄</span>';
+});
+</script>
+
+</body>
+</html>
